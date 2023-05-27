@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -25,6 +26,9 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 	var req newOrderRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		fmt.Println("request error:", err)
+
+		// TODO: yes, bad for security to return any error like that
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 
 		return
