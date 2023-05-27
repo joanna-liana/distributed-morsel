@@ -1,12 +1,21 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Patch, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller()
+interface AdjustCartItemsDto {
+  itemIds: string[];
+}
+
+@Controller('cart')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Patch()
+  adjustCartItems(@Body() { itemIds }: AdjustCartItemsDto) {
+    console.log('added items:', itemIds);
+  }
+
+  @Post('checkout')
+  checkOutCart() {
+    console.log('cart checked out!');
   }
 }
