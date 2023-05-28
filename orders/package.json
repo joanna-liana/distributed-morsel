@@ -9,8 +9,8 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start -e \"npx ts-node --require ./instrumentation.ts\"",
-    "start:dev": "yarn start --watch",
-    "start:debug": "yarn start --debug --watch",
+    "start:dev": "npm start --watch",
+    "start:debug": "npm start --debug --watch",
     "start:prod": " node --require ./dist/instrumentation.js ./dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
@@ -29,6 +30,7 @@
     "@opentelemetry/exporter-trace-otlp-proto": "^0.39.1",
     "@opentelemetry/sdk-metrics": "^1.13.0",
     "@opentelemetry/sdk-node": "^0.39.1",
+    "axios": "^1.4.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
