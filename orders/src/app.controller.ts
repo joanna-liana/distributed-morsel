@@ -46,20 +46,6 @@ export class AppController {
     };
 
     try {
-      const notificationPayload = {
-        OrderID: '123',
-        EstimatedArrival: new Date().toISOString(),
-      };
-
-      await firstValueFrom(
-        this.httpService.post(
-          restaurantPayload.callbackUrl,
-          notificationPayload,
-        ),
-      );
-
-      console.log('reach out to notifiactions');
-
       await firstValueFrom(
         this.httpService.post(restaurantUrl, restaurantPayload),
       );
