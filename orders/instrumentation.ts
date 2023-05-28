@@ -5,6 +5,7 @@ import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 
 const sdk = new opentelemetry.NodeSDK({
   resource: new Resource({
@@ -25,7 +26,7 @@ const sdk = new opentelemetry.NodeSDK({
       headers: {},
     }),
   }),
-  instrumentations: [getNodeAutoInstrumentations()],
+  instrumentations: [getNodeAutoInstrumentations(), new NestInstrumentation()],
 });
 
 sdk.start();
