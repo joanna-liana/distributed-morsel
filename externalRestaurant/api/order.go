@@ -48,10 +48,10 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 	confirmCallbackBody := bytes.NewBuffer(marshalledConfirmParams)
 
 	// TODO: make the call async
-	_, err = http.Post(req.CallbackURL, "application/json", confirmCallbackBody)
+	res, err := http.Post(req.CallbackURL, "application/json", confirmCallbackBody)
 
-	if err != nil {
-		log.Println("could not connect to the callbacks service:", err)
+	if err != nil || !(res.StatusCode >= 200 && res.StatusCode <= 300) {
+		log.Println("could not connect to the callbacks service:", err, res.StatusCode)
 
 		ctx.JSON(http.StatusInternalServerError, nil)
 
