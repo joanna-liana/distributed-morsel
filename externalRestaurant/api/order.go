@@ -2,12 +2,17 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type newOrderRequest struct {
@@ -47,11 +52,37 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 
 	confirmCallbackBody := bytes.NewBuffer(marshalledConfirmParams)
 
-	// TODO: make the call async
-	res, err := http.Post(req.CallbackURL, "application/json", confirmCallbackBody)
+	// Create an HTTP client with the new context
+	client := http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
 
-	if err != nil || !(res.StatusCode >= 200 && res.StatusCode <= 300) {
-		log.Println("could not connect to the callbacks service:", err, res.StatusCode)
+	// Extract the OTel span from the context
+	span := trace.SpanFromContext(ctx.Request.Context())
+
+	// Create a new context with the OTel span propagated
+	otelCtx := trace.ContextWithSpan(context.Background(), span)
+
+	notificationsReq, err := http.NewRequestWithContext(
+		otelCtx,
+		"POST",
+		req.CallbackURL,
+		confirmCallbackBody,
+	)
+
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(notificationsReq.Header))
+
+	if err != nil {
+		log.Println("could not create the request to the callbacks service:", err)
+
+		ctx.JSON(http.StatusInternalServerError, nil)
+
+		return
+	}
+
+	// TODO: make the call async
+	notificationsRes, err := client.Do(notificationsReq)
+
+	if err != nil || !(notificationsRes.StatusCode >= 200 && notificationsRes.StatusCode <= 300) {
+		log.Println("could not connect to the callbacks service:", err, notificationsRes.StatusCode)
 
 		ctx.JSON(http.StatusInternalServerError, nil)
 
