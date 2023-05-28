@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -26,7 +26,7 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 	var req newOrderRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		fmt.Println("request error:", err)
+		log.Println("request error:", err)
 
 		// TODO: yes, bad for security to return any error like that
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -47,7 +47,16 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 
 	confirmCallbackBody := bytes.NewBuffer(marshalledConfirmParams)
 
-	http.Post(req.CallbackURL, "application/json", confirmCallbackBody)
+	// TODO: make the call async
+	_, err = http.Post(req.CallbackURL, "application/json", confirmCallbackBody)
+
+	if err != nil {
+		log.Println("could not connect to the callbacks service:", err)
+
+		ctx.JSON(http.StatusInternalServerError, nil)
+
+		return
+	}
 
 	ctx.JSON(http.StatusAccepted, nil)
 }
