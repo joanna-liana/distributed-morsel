@@ -38,7 +38,7 @@ export class AppController {
 
     const restaurantUrl = 'http://localhost:8080/orders';
 
-    const payload: PlaceRestaurantOrderDto = {
+    const restaurantPayload: PlaceRestaurantOrderDto = {
       orderId,
       userId: USER_ID,
       itemIds: this.cartItems,
@@ -46,7 +46,23 @@ export class AppController {
     };
 
     try {
-      await firstValueFrom(this.httpService.post(restaurantUrl, payload));
+      const notificationPayload = {
+        OrderID: '123',
+        EstimatedArrival: new Date().toISOString(),
+      };
+
+      // await firstValueFrom(
+      //   this.httpService.post(
+      //     restaurantPayload.callbackUrl,
+      //     notificationPayload,
+      //   ),
+      // );
+
+      await firstValueFrom(
+        this.httpService.post(restaurantUrl, restaurantPayload),
+      );
+
+      // console.log('reach out to notifiactions');
 
       console.log('order sent to restaurant');
     } catch (err) {
