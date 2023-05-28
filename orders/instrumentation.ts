@@ -6,6 +6,10 @@ import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
+import api from '@opentelemetry/api';
+import { W3CTraceContextPropagator } from '@opentelemetry/core';
+
+api.propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 
 const sdk = new opentelemetry.NodeSDK({
   resource: new Resource({
