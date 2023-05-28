@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  jaeger:
+    container_name: distributed-morsel-jaeger
+    image: jaegertracing/all-in-one@sha256:81dc725e5470609c63b16e6b0110513c2ce8d459a7d3e1a156cb37b7347a3e93
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - 6831:6831
+      - 6832:6832
+      - 5778:5778
+      - 16686:16686
+      - 4317:4317
+      - 4318:4318
+      - 14250:14250
+      - 14268:14268
+      - 14269:14269
+      - 9411:9411
