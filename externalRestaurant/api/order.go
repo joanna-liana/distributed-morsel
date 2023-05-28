@@ -48,26 +48,13 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 
 	confirmCallbackBody := bytes.NewBuffer(marshalledConfirmParams)
 
-	// Create an HTTP to execute the request with the OTel context
-	client := http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
-
-	notificationsReq, err := http.NewRequestWithContext(
+	// TODO: make the call async
+	notificationsRes, err := otelhttp.Post(
 		ctx.Request.Context(),
-		http.MethodPost,
 		req.CallbackURL,
+		"application/json",
 		confirmCallbackBody,
 	)
-
-	if err != nil {
-		log.Println("could not create the request to the callbacks service:", err)
-
-		ctx.JSON(http.StatusInternalServerError, nil)
-
-		return
-	}
-
-	// TODO: make the call async
-	notificationsRes, err := client.Do(notificationsReq)
 
 	if err != nil || !(notificationsRes.StatusCode >= 200 && notificationsRes.StatusCode <= 300) {
 		log.Println("could not connect to the callbacks service:", err, notificationsRes.StatusCode)
