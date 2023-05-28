@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -10,9 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
-	"go.opentelemetry.io/otel/trace"
 )
 
 type newOrderRequest struct {
@@ -52,23 +48,15 @@ func (server *Server) acceptOrder(ctx *gin.Context) {
 
 	confirmCallbackBody := bytes.NewBuffer(marshalledConfirmParams)
 
-	// Create an HTTP client with the new context
+	// Create an HTTP to execute the request with the OTel context
 	client := http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
 
-	// Extract the OTel span from the context
-	span := trace.SpanFromContext(ctx.Request.Context())
-
-	// Create a new context with the OTel span propagated
-	otelCtx := trace.ContextWithSpan(context.Background(), span)
-
 	notificationsReq, err := http.NewRequestWithContext(
-		otelCtx,
-		"POST",
+		ctx.Request.Context(),
+		http.MethodPost,
 		req.CallbackURL,
 		confirmCallbackBody,
 	)
-
-	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(notificationsReq.Header))
 
 	if err != nil {
 		log.Println("could not create the request to the callbacks service:", err)
