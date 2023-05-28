@@ -2,8 +2,10 @@ import express from 'express';
 const app = express();
 const port = 8888;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.post('/orders/:orderId/confirm', (req, res) => {
+  console.log(`Order ${req.params.orderId} has been confirmed!`);
+
+  res.sendStatus(204);
 });
 
 app.listen(port, () => {
