@@ -2,15 +2,18 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 type Server struct {
 	router *gin.Engine
 }
 
-func NewServer() *Server {
+func NewServer(serviceName string) *Server {
 	server := &Server{}
 	router := gin.Default()
+	router.Use(otelgin.Middleware(serviceName))
 
 	router.POST("/orders", server.acceptOrder)
 
