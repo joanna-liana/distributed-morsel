@@ -1,5 +1,12 @@
 version: '3.8'
 services:
+  orders:
+    container_name: distributed-morsel-orders
+    build: ./orders
+    ports:
+      - 3000:3000
+    environment:
+      - JAEGER_HOST=http://jaeger
   jaeger:
     container_name: distributed-morsel-jaeger
     image: jaegertracing/all-in-one@sha256:81dc725e5470609c63b16e6b0110513c2ce8d459a7d3e1a156cb37b7347a3e93
