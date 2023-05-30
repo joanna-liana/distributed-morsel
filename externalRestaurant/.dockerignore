@@ -1,0 +1,7 @@
+.dockerignore
+Dockerfile
+
+*.md
+*.env
+
+Makefile
