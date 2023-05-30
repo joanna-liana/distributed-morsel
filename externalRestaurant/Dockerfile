@@ -15,6 +15,8 @@ RUN go mod download \
 ### PRODUCTION ###
 FROM scratch
 
+ENV ENV=production
+
 WORKDIR /app
 
 EXPOSE 8080

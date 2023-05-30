@@ -1,17 +1,26 @@
 package util
 
-import "github.com/spf13/viper"
+import (
+	"os"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	ServerAddress    string `mapstructure:"SERVER_ADDRESS"`
 	OTelServiceName  string `mapstructure:"OTEL_SERVICE_NAME"`
 	OTelCollectorURL string `mapstructure:"OTEL_EXPORTER_OTLP_ENDPOINT"`
-	OTelInsecure     string `mapstructure:"OTEL_INSECURE_MODE"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
 	viper.AddConfigPath(path)
-	viper.SetConfigName("sample")
+
+	if os.Getenv("ENV") == "production" {
+		viper.SetConfigName("docker")
+	} else {
+		viper.SetConfigName("local")
+	}
+
 	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
