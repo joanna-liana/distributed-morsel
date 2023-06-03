@@ -18,15 +18,15 @@ Service names in Jaeger:
 You can execute the flow by running 2 requests:
 1. Put some items in your cart:
 ```
-PATCH http://localhost:3000/cart
-{
-    "itemIds": [1,2]
-}
+curl -X PATCH \
+-H "Content-Type: application/json" \
+-d '{"itemIds": [1,2]}' \
+http://localhost:3000/cart
 ```
 2. Check out your cart to create the order:
 ```
-POST http://localhost:3000/cart/checkout
-<no payload>
+curl -X POST \
+http://localhost:3000/cart/checkout
 ```
 
 The orders app will then call the restaurant, which will in turn confirm the order by calling the notifications service.
