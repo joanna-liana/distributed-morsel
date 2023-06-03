@@ -1,15 +1,16 @@
 {
   "name": "distributed-morsel-notifications",
   "version": "1.0.0",
-  "main": "server.ts",
+  "author": "Joanna Liana",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "ts-node --require ./instrumentation.ts src/server.ts",
+    "build": "rm -rf dist && tsc",
     "test": "jest",
     "test:cov": "jest --collectCoverage",
     "lint": "eslint --fix ."
   },
-  "author": "Joanna Liana",
-  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
