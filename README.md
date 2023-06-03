@@ -1,4 +1,32 @@
 # distributed-morsel
-Distributed tracing playground using a mock food delivery app. See the README in `orders`.
+Distributed tracing playground using a mock food delivery app.
+
+## Quick start
+To see how the distributing tracing looks like, run `docker-compose up` in the root of this repo. It will start Jaeger (the "tracing browser") at `http://localhost:16686`.
+
+The service traces in Jaeger will show up after running the demo 👇
+
+Service names in Jaeger:
+- `dm-orders`
+- `dm-restaurant`
+- `dm-notifications`
 
 ![image](jaegerScreenshot.png)
+
+## Demo
+
+You can execute the flow by running 2 requests:
+1. Put some items in your cart:
+```
+PATCH http://localhost:3000/cart
+{
+    "itemIds": [1,2]
+}
+```
+2. Check out your cart to create the order:
+```
+POST http://localhost:3000/cart/checkout
+<no payload>
+```
+
+The orders app will then call the restaurant, which will in turn confirm the order by calling the notifications service.

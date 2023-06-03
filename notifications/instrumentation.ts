@@ -20,7 +20,7 @@ const sdk = new opentelemetry.NodeSDK({
   }),
   traceExporter: new OTLPTraceExporter({
     // the default value provided explictly
-    url: 'http://localhost:4318/v1/traces',
+    url: `${process.env.JAEGER_HOST}:4318/v1/traces`,
     // optional - collection of custom headers
     // to be sent with each request, empty by default
     headers: {},
@@ -28,7 +28,7 @@ const sdk = new opentelemetry.NodeSDK({
   metricReader: new PeriodicExportingMetricReader({
     exporter: new OTLPMetricExporter({
       // the default value provided explictly
-      url: 'http://localhost:4318/v1/metrics',
+      url: `${process.env.JAEGER_HOST}:4318/v1/metrics`,
       // an optional object containing custom headers
       // to be sent with each request
       headers: {},

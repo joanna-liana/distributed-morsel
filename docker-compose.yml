@@ -1,10 +1,28 @@
 version: '3.8'
 services:
+  # TODO: depends on jaeger, restaurant, notifications
   orders:
     container_name: distributed-morsel-orders
     build: ./orders
     ports:
       - 3000:3000
+    environment:
+      - JAEGER_HOST=http://jaeger
+      # TODO: use this in the code
+      - RESTAURANT_HOST=http://restaurant
+      - NOTIFICATIONS_HOST=http://notifications
+  # TODO: depends on jaeger, notifications
+  restaurant:
+    container_name: distributed-morsel-restaurant
+    build: ./externalRestaurant
+    ports:
+      - 8080:8080
+  # TODO: depends on jaeger
+  notifications:
+    container_name: distributed-morsel-notifications
+    build: ./notifications
+    ports:
+      - 8888:8888
     environment:
       - JAEGER_HOST=http://jaeger
   jaeger:

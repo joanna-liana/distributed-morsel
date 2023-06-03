@@ -36,13 +36,15 @@ export class AppController {
 
     const orderId = randomUUID();
 
-    const restaurantUrl = 'http://localhost:8080/orders';
+    // TODO: get from config
+    const restaurantUrl = `${process.env.RESTAURANT_HOST}:8080/orders`;
 
     const restaurantPayload: PlaceRestaurantOrderDto = {
       orderId,
       userId: USER_ID,
       itemIds: this.cartItems,
-      callbackUrl: `http://localhost:8888/orders/${orderId}/confirm`,
+      // TODO: get from config
+      callbackUrl: `${process.env.NOTIFICATIONS_HOST}:8888/orders/${orderId}/confirm`,
     };
 
     try {
