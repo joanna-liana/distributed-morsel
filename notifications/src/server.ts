@@ -9,5 +9,5 @@ app.post('/orders/:orderId/confirm', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Notifications service listening on port ${port}`);
 });
