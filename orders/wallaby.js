@@ -8,9 +8,9 @@ module.exports = function (_wallaby) {
 
     env: {
       type: 'node',
-      runner: 'node',
     },
 
+    // this is what makes or breaks the config
     autoDetect: true,
   };
 };
