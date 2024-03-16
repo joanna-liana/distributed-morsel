@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { randomUUID } from 'crypto';
+import { config } from './config';
 
 const USER_ID = '123test';
 
@@ -36,15 +37,13 @@ export class AppController {
 
     const orderId = randomUUID();
 
-    // TODO: get from config
-    const restaurantUrl = `${process.env.RESTAURANT_HOST}:8080/orders`;
+    const restaurantUrl = `${config.restaurantBaseUrl}/orders`;
 
     const restaurantPayload: PlaceRestaurantOrderDto = {
       orderId,
       userId: USER_ID,
       itemIds: this.cartItems,
-      // TODO: get from config
-      callbackUrl: `${process.env.NOTIFICATIONS_HOST}:8888/orders/${orderId}/confirm`,
+      callbackUrl: `${config.notificationsBaseUrl}/orders/${orderId}/confirm`,
     };
 
     try {

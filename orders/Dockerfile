@@ -1,6 +1,8 @@
 ### BUILD ###
 FROM node:18.12.0-bullseye-slim AS build
 
+ARG APP_PORT=3000
+
 WORKDIR /usr/src/app
 COPY . .
 
@@ -12,8 +14,7 @@ RUN npm ci \
 FROM node:18.12.0-bullseye-slim AS production
 ENV NODE_ENV=production
 
-# TODO: to be fetched from args
-EXPOSE 3000
+EXPOSE $APP_PORT
 
 WORKDIR /usr/src/app
 COPY . .
