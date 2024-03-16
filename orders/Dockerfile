@@ -21,9 +21,12 @@ COPY . .
 
 COPY --from=build /usr/src/app/dist ./dist
 
-RUN npm ci --omit=dev\
+RUN npm ci --omit=dev \
 && npm cache clean --force \
-&& apt-get update && apt-get install -y --no-install-recommends dumb-init
+&& apt-cache policy dumb-init \
+&& apt-get update && apt-get install -y --no-install-recommends dumb-init=1.2.5-1 \
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
 
 USER node
 
