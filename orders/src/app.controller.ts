@@ -4,12 +4,9 @@ import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { randomUUID } from 'crypto';
 import { config } from './config';
-import {
-  EventStoreDBClient,
-  FORWARDS,
-  START,
-  jsonEvent,
-} from '@eventstore/db-client';
+import { jsonEvent } from '@eventstore/db-client';
+import { eventStore } from './event-store';
+import { CART_ITEMS_CHANGED, CART_ITEMS_STREAM } from './cart-items-events';
 
 const USER_ID = '123test';
 
@@ -24,12 +21,6 @@ interface PlaceRestaurantOrderDto {
   callbackUrl: string;
 }
 
-// ESDB client
-const eventStore = new EventStoreDBClient(
-  { endpoint: 'eventstore:2113' },
-  { insecure: true },
-);
-
 @Controller('cart')
 export class AppController {
   private cartItems: string[];
@@ -40,29 +31,14 @@ export class AppController {
   async adjustCartItems(@Body() { itemIds }: AdjustCartItemsDto) {
     this.cartItems = itemIds.map((id) => id.toString());
 
-    const cartItemsStream = 'cart-items-stream';
-
     const event = jsonEvent({
-      type: 'CartItemsChanged',
+      type: CART_ITEMS_CHANGED,
       data: {
         itemIds,
       },
     });
 
-    await eventStore.appendToStream(cartItemsStream, [event]);
-
-    const eventStream = eventStore.readStream(cartItemsStream, {
-      fromRevision: START,
-      direction: FORWARDS,
-    });
-
-    for await (const { event } of eventStream) {
-      console.log(
-        `Cart items changed: ${JSON.stringify(
-          (event.data as { itemIds: string[] }).itemIds,
-        )}`,
-      );
-    }
+    await eventStore.appendToStream(CART_ITEMS_STREAM, [event]);
   }
 
   @Post('checkout')
