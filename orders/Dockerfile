@@ -11,7 +11,7 @@ RUN npm ci \
 && npm cache clean --force
 
 ### DEVELOPMENT ###
-FROM node:20.9.0-bullseye-slim AS development
+FROM node:20.9.0-bullseye AS development
 
 EXPOSE $APP_PORT
 
