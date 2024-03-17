@@ -3,7 +3,11 @@ services:
   # TODO: depends on jaeger, restaurant, notifications
   orders:
     container_name: distributed-morsel-orders
-    build: ./orders
+    build:
+      dockerfile: Dockerfile
+      context: ./orders
+      # TODO: separate compose
+      target: development
     ports:
       - 3000:3000
     environment:
@@ -11,7 +15,12 @@ services:
       # TODO: use this in the code
       - RESTAURANT_HOST=http://restaurant
       - NOTIFICATIONS_HOST=http://notifications
-  # TODO: depends on jaeger, notifications
+    # TODO: separate compose
+    volumes:
+      - ./orders:/usr/src/app
+      - ./orders/node_modules:/usr/src/app/node_modules
+    command: npm run start:dev
+  # TODO: depends on jaeger, notifications, eventstore
   restaurant:
     container_name: distributed-morsel-restaurant
     build: ./externalRestaurant

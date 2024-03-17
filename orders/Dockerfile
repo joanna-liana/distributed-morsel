@@ -1,5 +1,5 @@
 ### BUILD ###
-FROM node:18.12.0-bullseye-slim AS build
+FROM node:20.9.0-bullseye-slim AS build
 
 ARG APP_PORT=3000
 
@@ -10,8 +10,19 @@ RUN npm ci \
 && npm run build \
 && npm cache clean --force
 
+### DEVELOPMENT ###
+FROM node:20.9.0-bullseye-slim AS development
+
+EXPOSE $APP_PORT
+
+WORKDIR /usr/src/app
+COPY . .
+COPY --from=build /usr/src/app/dist ./dist
+
+RUN npm install -g @nestjs/cli@9.0.0
+
 ### PRODUCTION ###
-FROM node:18.12.0-bullseye-slim AS production
+FROM node:20.9.0-bullseye-slim AS production
 ENV NODE_ENV=production
 
 EXPOSE $APP_PORT
