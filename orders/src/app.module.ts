@@ -1,9 +1,9 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { HttpModule } from '@nestjs/axios';
-import { eventStore } from './event-store';
+import { eventStore } from './events/event-store';
 import { FORWARDS, START } from '@eventstore/db-client';
-import { CART_ITEMS_STREAM } from './cart-items-events';
+import { CART_ITEMS_STREAM } from './events/cart-items-events';
 
 @Module({
   imports: [HttpModule],
