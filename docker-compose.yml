@@ -10,6 +10,7 @@ services:
       target: development
     ports:
       - 3000:3000
+      - 9229:9229
     environment:
       - JAEGER_HOST=http://jaeger
       # TODO: use this in the code
@@ -19,7 +20,7 @@ services:
     volumes:
       - ./orders:/usr/src/app
       - ./orders/node_modules:/usr/src/app/node_modules
-    command: npm run start:dev
+    command: npm run start:debug
   # TODO: depends on jaeger, notifications, eventstore
   restaurant:
     container_name: distributed-morsel-restaurant
