@@ -2,12 +2,15 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/EventStore/EventStore-Client-Go/v4/esdb"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -23,7 +26,57 @@ type confirmOrderParams struct {
 	EstimatedArrival string `json:"estimatedArrival" binding:"required"`
 }
 
+type TestEvent struct {
+	Id            string
+	ImportantData string
+}
+
+func initEventStore() {
+	// region createClient
+	settings, err := esdb.ParseConnectionString("esdb://eventstore:2113?tls=false")
+
+	if err != nil {
+		panic(err)
+	}
+
+	db, err := esdb.NewClient(settings)
+
+	// endregion createClient
+	if err != nil {
+		panic(err)
+	}
+
+	// region createEvent
+	testEvent := TestEvent{
+		Id:            uuid.NewString(),
+		ImportantData: "I wrote my first event!",
+	}
+
+	data, err := json.Marshal(testEvent)
+
+	if err != nil {
+		panic(err)
+	}
+
+	eventData := esdb.EventData{
+		ContentType: esdb.ContentTypeJson,
+		EventType:   "TestEvent",
+		Data:        data,
+	}
+	// endregion createEvent
+
+	// region appendEvents
+	_, err = db.AppendToStream(context.Background(), "some-stream", esdb.AppendToStreamOptions{}, eventData)
+	// endregion appendEvents
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (server *Server) acceptOrder(ctx *gin.Context) {
+	initEventStore()
+
 	var req newOrderRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
