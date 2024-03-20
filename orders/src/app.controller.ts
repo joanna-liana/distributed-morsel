@@ -13,7 +13,7 @@ import {
 } from './events/cart-items-events';
 import {
   ORDERS_STREAM,
-  ORDER_PENDING,
+  ORDER_PLACED,
   ORDER_PLACING_FAILED,
 } from './events/order-events';
 
@@ -79,7 +79,7 @@ export class AppController {
       );
 
       const event = jsonEvent({
-        type: ORDER_PENDING,
+        type: ORDER_PLACED,
         data: {
           userId: USER_ID,
           itemIds: this.cartItems,
