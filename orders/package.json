@@ -10,7 +10,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start -e \"npx ts-node --require ./instrumentation.ts\"",
     "start:dev": "npm start -- --watch",
-    "start:debug": "npm start -- --debug --watch",
+    "start:debug": "nest start --debug 0.0.0.0:9229 --watch",
     "start:prod": " node --require ./dist/instrumentation.js ./dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
