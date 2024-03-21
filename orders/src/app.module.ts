@@ -3,8 +3,8 @@ import { AppController } from './app.controller';
 import { HttpModule } from '@nestjs/axios';
 import { eventStore } from './events/event-store';
 import { START } from '@eventstore/db-client';
-import { CART_ITEMS_STREAM } from './events/cart-items-events';
 import { ORDERS_STREAM } from './events/order-events';
+import { CART_STREAM } from './events/cart/cart.events';
 
 @Module({
   imports: [HttpModule],
@@ -13,14 +13,11 @@ import { ORDERS_STREAM } from './events/order-events';
 })
 export class AppModule implements OnModuleInit {
   onModuleInit() {
-    const cartItemsSubscription = eventStore.subscribeToStream(
-      CART_ITEMS_STREAM,
-      {
-        fromRevision: START,
-      },
-    );
+    const cartSubscription = eventStore.subscribeToStream(CART_STREAM, {
+      fromRevision: START,
+    });
 
-    cartItemsSubscription.on('data', (event) => {
+    cartSubscription.on('data', (event) => {
       console.log(
         `[${event.event.type}] payload: ${JSON.stringify(event.event.data)}`,
       );

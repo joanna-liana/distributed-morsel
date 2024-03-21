@@ -6,16 +6,13 @@ import { randomUUID } from 'crypto';
 import { config } from './config';
 import { jsonEvent } from '@eventstore/db-client';
 import { eventStore } from './events/event-store';
-import {
-  CART_CHECKED_OUT,
-  CART_ITEMS_CHANGED,
-  CART_ITEMS_STREAM,
-} from './events/cart-items-events';
+import { CART_CHECKED_OUT, CART_STREAM } from './events/cart/cart.events';
 import {
   ORDERS_STREAM,
   ORDER_PLACED,
   ORDER_PLACING_FAILED,
 } from './events/order-events';
+import { commandHandler } from './events/cart/cart.command-handler';
 
 const USER_ID = '123test';
 
@@ -33,6 +30,7 @@ interface PlaceRestaurantOrderDto {
 @Controller('cart')
 export class AppController {
   private cartItems: string[];
+  private readonly cartItemCommandHandler = commandHandler(eventStore);
 
   constructor(private readonly httpService: HttpService) {}
 
@@ -40,15 +38,13 @@ export class AppController {
   async adjustCartItems(@Body() { itemIds }: AdjustCartItemsDto) {
     this.cartItems = itemIds.map((id) => id.toString());
 
-    const event = jsonEvent({
-      type: CART_ITEMS_CHANGED,
+    await this.cartItemCommandHandler.handle({
+      type: 'ChangeCartItems',
       data: {
         userId: USER_ID,
         itemIds,
       },
     });
-
-    await eventStore.appendToStream(CART_ITEMS_STREAM, [event]);
   }
 
   @Post('checkout')
@@ -60,11 +56,13 @@ export class AppController {
       },
     });
 
-    await eventStore.appendToStream(CART_ITEMS_STREAM, [event]);
+    await eventStore.appendToStream(CART_STREAM, [event]);
 
     const orderId = randomUUID();
 
     const restaurantUrl = `${config.restaurantBaseUrl}/orders`;
+
+    // TODO: emit place order command
 
     const restaurantPayload: PlaceRestaurantOrderDto = {
       orderId,
