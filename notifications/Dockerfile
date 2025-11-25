@@ -1,5 +1,5 @@
 ### BUILD ###
-FROM node:18.12.0-bullseye-slim AS build
+FROM node:24-bullseye-slim AS build
 
 WORKDIR /usr/src/app
 COPY . .
@@ -9,7 +9,7 @@ RUN yarn install --frozen-lockfile \
 && yarn cache clean --force
 
 ### PRODUCTION ###
-FROM node:18.12.0-bullseye-slim AS production
+FROM node:24-bullseye-slim AS production
 ENV NODE_ENV=production
 
 # TODO: to be fetched from args
