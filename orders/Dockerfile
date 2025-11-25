@@ -21,6 +21,8 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN npm install -g @nestjs/cli@9.0.0
 
+CMD ["npm", "run", "start:dev"]
+
 ### PRODUCTION ###
 FROM node:24-bullseye-slim AS production
 ENV NODE_ENV=production

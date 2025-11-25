@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   # TODO: depends on jaeger, restaurant, notifications
   orders:
@@ -20,7 +19,6 @@ services:
     volumes:
       - ./orders:/usr/src/app
       - ./orders/node_modules:/usr/src/app/node_modules
-    command: npm run start:debug
   # TODO: depends on jaeger, notifications, eventstore
   restaurant:
     container_name: distributed-morsel-restaurant
